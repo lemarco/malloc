@@ -15,7 +15,6 @@ SRC = $(addprefix $(SRC_PATH)/, $(SRC_NAME))
 OBJ = $(SRC:.c=.o)
 INC = -I includes
 
-MAL = inc/malloc.h
 
 all: $(NAME)
 

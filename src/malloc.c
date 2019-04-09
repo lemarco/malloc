@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-
+/*
 t_chunk *create_new_allocation_area(size_t size, bool flag)
 {
 	t_chunk *cur; // old
@@ -38,7 +38,7 @@ void add_chunk_to_page(t_chunk *cur, t_chunk *add)
 	if (cur == NULL)
 		add->next = NULL;
 	else
-		add->next = cur;
+add->next = cur;
 	cur = add;
 }
 
@@ -146,6 +146,7 @@ void *large_allocator(size_t size)
 	last->next = add_large_chunk(last, size);
 	return (last->next);
 }
+*/
 
 void *malloc(size_t size)
 {
