@@ -1,31 +1,15 @@
 #include "malloc.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
 
 void *malloc(size_t size)
 {
-	void* ptr;
+	void *(*m_size[3])(size_t) = {&tiny_alloc, &small_alloc, &large_alloc};
+	void *ptr;
 
-	ptr = NULL;
+	if (size == 0 || size > MAX_SIZE - CHUNK_SZ)
+		return (NULL);
 	pthread_mutex_lock(&g_mmutex);
-	if (size < 1 || size > MAX_SIZE)
-	{
-		pthread_mutex_unlock(&g_mmutex);
-		return (NULL);
-	}
-	if (size < TINY_ALLOC)
-		ptr = allocator(size, false);
-	else if (size < SMALL_ALLOC)
-		ptr = allocator(size, true);
-	else
-		ptr = large_allocator(size);
-	if (ptr == NULL)
-	{
-		pthread_mutex_unlock(&g_mmutex);
-		return (NULL);
-	}
+	ptr = m_size[MSIZE(size)](size); 
 	pthread_mutex_unlock(&g_mmutex);
-	return ((void*)ptr + CHUNK_SZ);
+	return (ptr);
 }
 
