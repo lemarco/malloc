@@ -6,6 +6,7 @@
 # include <pthread.h>
 # include <stdbool.h>
 
+#include <string.h>
 
 #define MAX_SIZE (~(size_t)0)
 
@@ -66,9 +67,11 @@ pthread_mutex_t 	g_mmutex;
 void *tiny_alloc(size_t size);
 void *small_alloc(size_t size);
 void *large_alloc(size_t size);
+t_chunk *check_seq(void *ptr, t_chunk *seq);
+t_chunk *check_tiny_and_small(void *ptr, int *flag);
 void			*malloc(size_t size);
-// void			*realloc(void *ptr, size_t size);
+void			*realloc(void *ptr, size_t size);
 void			free(void *ptr);
-// void			show_alloc_mem();
+void			show_alloc_mem();
 
 #endif

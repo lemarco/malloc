@@ -9,8 +9,7 @@ CC = gcc
 CFLAGS = -Wall -Werror -Wextra
 
 SRC_PATH = ./src
-SRC_NAME =	malloc.c alloc.c 
-
+SRC_NAME =	malloc.c alloc.c free.c realloc.c
 SRC = $(addprefix $(SRC_PATH)/, $(SRC_NAME))
 OBJ = $(SRC:.c=.o)
 INC = -I includes

@@ -35,8 +35,8 @@ void free_chunk(t_chunk *chunk, int flag )
 	t_alloc *temp;
 	
 	if (flag == 2)
-		free_large(chunk, chunk->size)
-	if ( flag == 1)
+		free_large(chunk, chunk->size);
+	if (flag == 1)
 		temp = g_page.small;
 	else
 		temp = g_page.tiny;
@@ -60,7 +60,6 @@ t_chunk *check_seq(void *ptr, t_chunk *seq)
 {
 	while (seq != NULL)
 	{
-		i++;
 		if (((void *)seq + CHUNK_SZ) == ptr)
 			return (seq);
 	}	
@@ -73,7 +72,7 @@ t_chunk *check_list(void *ptr, t_alloc *list)
 
 	while (list)
 	{
-		if (temp = check_seq(list->alloc) != NULL);
+		if ((temp = check_seq(ptr, list->alloc)) != NULL)
 			return temp;
 		list = list->next;
 	}
@@ -85,14 +84,14 @@ t_chunk *check_tiny_and_small(void *ptr, int *flag)
 	t_chunk *temp;
 	
 	temp = NULL;
-	if (temp = check_list(ptr, g_page.tiny) != NULL)
+	if ((temp = check_list(ptr, g_page.tiny)) != NULL)
 	{
 		*flag = 0;
 		return (temp);
 	}
-	if (temp = check_list(ptr, g_page.small) != NULL)
+	if ((temp = check_list(ptr, g_page.small)) != NULL)
 	{
-		*flag = 1
+		*flag = 1;
 		return (temp);
 	}
 	return (NULL);
@@ -100,24 +99,18 @@ t_chunk *check_tiny_and_small(void *ptr, int *flag)
 
 void free(void *ptr)
 {
-	pthread_mutex_lock(&g_mutex);
+	pthread_mutex_lock(&g_mmutex);
 	t_chunk *temp;
-	int seq_num;
 	int flag;
 	
-	
-	i = -1;
 	temp = NULL;
-	if (seq_num = check_seq(ptr, g_page.large) != -1)
-	{
-		temp = g_page.large;
+	if ((temp = check_seq(ptr, g_page.large)) != NULL)
 		flag  = 2;
-	}
 	else
 		temp = check_tiny_and_small(ptr, &flag);
 	if (temp != NULL)
-		free_chunk(temp, ptr, flag);
+		free_chunk(temp, flag);
 
-	pthread_mutex_unlock(&g_mutex);
+	pthread_mutex_unlock(&g_mmutex);
 }
 
