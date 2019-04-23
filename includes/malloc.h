@@ -7,7 +7,7 @@
 # include <stdbool.h>
 
 #include <string.h>
-
+#include <stdio.h>
 #define MAX_SIZE (~(size_t)0)
 
 /********************************************/
