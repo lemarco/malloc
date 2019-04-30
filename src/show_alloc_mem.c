@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   show_alloc_mem.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ihoienko <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/04/30 12:30:49 by ihoienko          #+#    #+#             */
+/*   Updated: 2019/04/30 12:30:51 by ihoienko         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "malloc.h"
 
-static inline void		show_alloc_tiny_small(t_alloc *mem, \
+static void	show_alloc_tiny_small(t_alloc *mem, \
 						size_t *total, const char *size_str)
 {
 	t_chunk		*chunk;
@@ -21,7 +33,7 @@ static inline void		show_alloc_tiny_small(t_alloc *mem, \
 	}
 }
 
-static inline void		show_alloc_large(size_t *total)
+static void	show_alloc_large(size_t *total)
 {
 	t_chunk	*chunk;
 
@@ -37,8 +49,7 @@ static inline void		show_alloc_large(size_t *total)
 	}
 }
 
-
-void					show_alloc_mem(void)
+void		ssshow_alloc_mem(void)
 {
 	size_t				total;
 
@@ -53,4 +64,3 @@ void					show_alloc_mem(void)
 	printf("Total : %lu bytes\n", total);
 	pthread_mutex_unlock(&g_mmutex);
 }
-
