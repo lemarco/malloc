@@ -70,12 +70,13 @@ void	*tiny_alloc(size_t size)
 void	*small_alloc(size_t size)
 {
 	t_alloc *alloc;
-
-	alloc = g_page.tiny;
+	
+	alloc = g_page.small;
 	while (alloc && !alloc->free)
 		alloc = alloc->next;
 	if (!alloc)
 	{
+		//printf("small_alloc[1]\n");
 		alloc = mmap(0, NB_BLOCKS * SMALL_CHUNK_SZ, PROTECT, FLAGS, -1, 0);
 		if (alloc == MAP_FAILED)
 			return (NULL);

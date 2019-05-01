@@ -18,6 +18,7 @@ t_chunk		*check_seq(void *ptr, t_chunk *seq)
 	{
 		if (((void *)seq + CHUNK_SZ) == ptr)
 			return (seq);
+		seq = seq->next;
 	}
 	return (NULL);
 }
@@ -60,11 +61,14 @@ void		free(void *ptr)
 
 	pthread_mutex_lock(&g_mmutex);
 	temp = NULL;
-	if ((temp = check_seq(ptr, g_page.large)) != NULL)
-		flag = 2;
-	else
-		temp = check_tiny_and_small(ptr, &flag);
-	if (temp != NULL)
-		free_chunk(temp, flag);
+	if (ptr != NULL)
+	{
+		if ((temp = check_seq(ptr, g_page.large)) != NULL)
+			flag = 2;
+		else
+			temp = check_tiny_and_small(ptr, &flag);
+		if (temp != NULL)
+			free_chunk(temp, flag);
+	}
 	pthread_mutex_unlock(&g_mmutex);
 }
