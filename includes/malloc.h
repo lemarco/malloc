@@ -22,7 +22,7 @@
 # include <stdio.h>
 
 # define MAX_SIZE (~(size_t)0)
-# define NB_BLOCKS 128
+# define NB_BLOCKS 100
 # define TINY_CHUNK_SZ 64
 # define SMALL_CHUNK_SZ 1024
 # define PAGE_SZ getpagesize()
