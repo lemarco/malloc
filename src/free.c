@@ -1,64 +1,74 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ihoienko <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/04/30 12:30:13 by ihoienko          #+#    #+#             */
+/*   Updated: 2019/04/30 12:30:15 by ihoienko         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "malloc.h"
 
-void	munmap_chunk(t_chunk *to_free)
+t_chunk		*check_seq(void *ptr, t_chunk *seq)
 {
-	munmap(to_free, to_free->size);
-	to_free->is_free = 1;
-}
-
-t_chunk *find_chunk(t_chunk *to_find, t_chunk **to_save, void* ptr)
-{
-	*to_save = to_find;
-	while(to_find->next)
+	while (seq != NULL)
 	{
-		*to_save = to_find;
-		if ((to_find->next + CHUNK_SZ) == ptr)
-			return (to_find->next);
-		to_find->next = to_find->next->next;
+		if (((void *)seq + CHUNK_SZ) == ptr)
+			return (seq);
+		seq = seq->next;
 	}
-	return NULL;
+	return (NULL);
 }
 
-void	free(void *ptr)
+t_chunk		*check_list(void *ptr, t_alloc *list)
 {
-	size_t size;
-	t_chunk *chunk_to_free;
-	t_chunk *cur;
-	t_chunk *to_save;
-	if (ptr == NULL)
-		return ;
+	t_chunk *temp;
+
+	while (list)
+	{
+		if ((temp = check_seq(ptr, list->alloc)) != NULL)
+			return (temp);
+		list = list->next;
+	}
+	return (NULL);
+}
+
+t_chunk		*check_tiny_and_small(void *ptr, int *flag)
+{
+	t_chunk *temp;
+
+	temp = NULL;
+	if ((temp = check_list(ptr, g_page.tiny)) != NULL)
+	{
+		*flag = 0;
+		return (temp);
+	}
+	if ((temp = check_list(ptr, g_page.small)) != NULL)
+	{
+		*flag = 1;
+		return (temp);
+	}
+	return (NULL);
+}
+
+void		free(void *ptr)
+{
+	t_chunk	*temp;
+	int		flag;
+
 	pthread_mutex_lock(&g_mmutex);
-	chunk_to_free = (void*)ptr - CHUNK_SZ;
-	size = chunk_to_free->size;
-	if (size <= TINY_AREA)
-		cur = g_page.tiny;
-	else if (size <= SMALL_AREA)
-		cur = g_page.small;
-	else
-		cur = g_page.large;
-	munmap_chunk(find_chunk(cur, &to_save, ptr));
+	temp = NULL;
+	if (ptr != NULL)
+	{
+		if ((temp = check_seq(ptr, g_page.large)) != NULL)
+			flag = 2;
+		else
+			temp = check_tiny_and_small(ptr, &flag);
+		if (temp != NULL)
+			free_chunk(temp, flag);
+	}
 	pthread_mutex_unlock(&g_mmutex);
 }
-
-// void		free(void *ptr)
-// {
-// 	t_block	*free_ptr;
-
-// 	free_ptr = NULL;
-
-	
-// 	if ((free_ptr = find_prev_block(g_page.tiny, ptr)) != NULL)
-// 	{
-// 		concat_free_next(free_ptr, free_ptr->next, ptr);
-// 		munmap_page_small(g_page.tiny, TINY_SIZE, free_ptr);
-// 	}
-// 	else if ((free_ptr = find_prev_block(g_page.small, ptr)) != NULL)
-// 	{
-// 		concat_free_next(free_ptr, free_ptr->next, ptr);
-// 		munmap_page_small(g_page.small, SMALL_SIZE, free_ptr);
-// 	}
-// 	else if ((free_ptr = find_prev_block(g_page.large, ptr)) != NULL)
-// 		munmap_page_large(free_ptr, free_ptr->next, ptr);
-	
-// 	return ;
-// }

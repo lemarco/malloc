@@ -1,5 +1,6 @@
-
-HOSTTYPE := $(shell uname -m)_$(shell uname -s)
+ifeq ($(HOSTTYPE),)
+	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
+endif
 
 
 NAME = libft_malloc_$(HOSTTYPE).so
@@ -9,8 +10,7 @@ CC = gcc
 CFLAGS = -Wall -Werror -Wextra
 
 SRC_PATH = ./src
-SRC_NAME =	malloc.c free.c
-
+SRC_NAME =	malloc.c alloc.c free.c realloc.c show_alloc_mem.c unmap.c
 SRC = $(addprefix $(SRC_PATH)/, $(SRC_NAME))
 OBJ = $(SRC:.c=.o)
 INC = -I includes
